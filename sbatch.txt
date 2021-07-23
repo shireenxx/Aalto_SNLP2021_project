@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=Multi_test
+#SBATCH --account=project_2002867
+#SBATCH --time=0-8:00:00
+#SBATCH --gres=gpu:v100:1
+#SBATCH --partition=gpu
+#SBATCH --mem=16GB
+#SBATCH --output=/scratch/project_2002867/m3_50/%x-%j.out
+#SBATCH --error=/scratch/project_2002867/m3_50/%x-%j.err
+#SBATCH --mail-type=END
+#SBATCH --mail-user=wei.sun@aalto.fi
+
+PATH="/scratch/project_2002867/wei_env/anaconda3/bin:$PATH"
+
+srun python3 ~/MultitaskMCA/main.py --version mimic3 --DATA_DIR /projappl/project_2002867/data_multi/ --MIMIC_3_DIR /projappl/project_2002867/data_multi/mimic3/ --MODEL_DIR /scratch/project_2002867/model_saved --data_path /projappl/project_2002867/data_multi/mimic3/train_50_m.csv --vocab /projappl/project_2002867/data_multi/mimic3/vocab.csv --Y 50 --embed_file /projappl/project_2002867/data_multi/mimic3/processed_full.embed --criterion prec_at_5 --gpu 0 --gpus 0 --MAX_LENGTH 2500 --verbose 0 --n_epochs 50 --batch_size 16 --model FNet --filter_size 10  --optimizer Adam --lr 8e-3 --weight_decay 0 --MTL No --task ICD9 --loss_weight_CCS 0.3 --credential ~/MultitaskMCA/credential-mt.json --dropout 0.2
+
+module load cuda/10.2.89
+
+sinteractive --time=0:20:00 --gres=gpu:v100:1 
